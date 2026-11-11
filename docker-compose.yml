@@ -33,5 +33,26 @@ services:
     depends_on:
       - backend
 
+  # Test runners (only with `--profile test`, never started by plain `docker compose up`).
+  # Sources are copied without bin/obj/node_modules so host build output never leaks in.
+  backend-tests:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    profiles: ["test"]
+    volumes:
+      - ./backend:/src:ro
+    environment:
+      TEST_DB_CONNECTION: "Host=db;Port=5432;Database=admission_test;Username=admission;Password=admission"
+    command: sh -c "mkdir -p /work && cd /src && tar cf - --exclude=bin --exclude=obj . | tar xf - -C /work && cd /work && dotnet test SchoolAdmission.Tests"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend-tests:
+    image: node:20-alpine
+    profiles: ["test"]
+    volumes:
+      - ./frontend:/src:ro
+    command: sh -c "mkdir -p /work && cd /src && tar cf - --exclude=node_modules --exclude=dist . | tar xf - -C /work && cd /work && npm ci && npm test"
+
 volumes:
   pgdata:
