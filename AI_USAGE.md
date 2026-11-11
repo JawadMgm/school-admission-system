@@ -4,7 +4,7 @@
 
 **What it did**: from the assignment PDF it designed the API and concurrency approach and wrote almost all of the code and docs: the .NET backend, the xUnit integration and concurrency tests, the React frontend and its tests, both Dockerfiles, `docker-compose.yml`, and these documents.
 
-**What I did myself**: gave it the assignment, and I am responsible for reading, running and understanding everything before submission. (Edit this line to describe your own part honestly, including anything you changed.)
+**What I did myself**: gave it the assignment, directed the work, and I am responsible for reviewing and understanding everything I submit.
 
 ## Where the AI got things wrong, and how it was caught
 
