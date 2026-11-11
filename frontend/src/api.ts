@@ -40,7 +40,7 @@ const FRIENDLY: Record<string, string> = {
   HOLD_CANCELLED: 'This application was cancelled. Please apply again.',
   ALREADY_CONFIRMED: 'This admission is already confirmed.',
   FORBIDDEN: 'This application belongs to a different student ID.',
-  MISSING_STUDENT_ID: 'Please enter your student ID first.',
+  INVALID_STUDENT_ID: 'Please enter a valid 17-digit birth registration number.',
 };
 
 async function request<T>(
@@ -81,6 +81,5 @@ export const api = {
     request<{ holdId: string; status: HoldStatus }>(`/holds/${holdId}/confirm`, { method: 'POST', studentId }),
   cancel: (holdId: string, studentId: string) =>
     request<void>(`/holds/${holdId}`, { method: 'DELETE', studentId }),
-  myHolds: (studentId: string) =>
-    request<{ holds: MyHold[] }>('/me/holds', { studentId }).then((r) => r.holds),
+  myHolds: (studentId: string) => request<MyHold[]>('/me/holds', { studentId }),
 };

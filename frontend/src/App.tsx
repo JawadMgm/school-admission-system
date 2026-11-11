@@ -27,7 +27,9 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(Date.now());
 
-  const sid = studentId.trim();
+  const typed = studentId.trim();
+  const validSid = /^\d{17}$/.test(typed);
+  const sid = validSid ? typed : '';
 
   const loadClasses = useCallback(async () => {
     try { setClasses(await api.listClasses()); }
@@ -66,7 +68,7 @@ export default function App() {
   }
 
   const apply = (classId: string) => run(async () => {
-    if (!sid) throw new ApiError(400, 'MISSING_STUDENT_ID', 'Please enter your student ID first.');
+    if (!sid) throw new ApiError(400, 'INVALID_STUDENT_ID', 'Please enter a valid 17-digit birth registration number first.');
     await api.apply(classId, sid);
     changeTab('mine');
     setNotice('Seat held! Pay the admission fee before the timer runs out.');
@@ -90,12 +92,15 @@ export default function App() {
       <header>
         <h1>School Admission</h1>
         <label className="student">
-          Student ID
+          Birth registration number (জন্ম নিবন্ধন নম্বর)
           <input
             value={studentId}
             onChange={(e) => changeStudent(e.target.value)}
-            placeholder="e.g. 2015261234567890"
+            placeholder="17 digits, e.g. 20152691234567890"
+            inputMode="numeric"
+            maxLength={17}
           />
+          {typed && !validSid && <span className="field-error">Must be exactly 17 digits.</span>}
         </label>
       </header>
 
@@ -124,7 +129,7 @@ export default function App() {
                 <div><dt>Available</dt><dd>{c.availableSeats}</dd></div>
               </dl>
               <button disabled={busy || c.availableSeats === 0} onClick={() => apply(c.id)}>
-                {c.availableSeats === 0 ? 'Full' : 'Apply'}
+                {c.availableSeats === 0 ? 'আসন নেই (Full)' : 'আবেদন করুন'}
               </button>
             </article>
           ))}
@@ -133,7 +138,7 @@ export default function App() {
 
       {tab === 'mine' && (
         <section>
-          {!sid && <p>Enter your student ID above to see your applications.</p>}
+          {!sid && <p>Enter your 17-digit birth registration number above to see your applications.</p>}
           {sid && holds === null && <p>Loading...</p>}
           {sid && holds?.length === 0 && <p>You have no applications yet.</p>}
           {holds?.map((h) => {
@@ -145,19 +150,19 @@ export default function App() {
                 {st === 'HELD' && (
                   <>
                     <p className="timer">Time left: <strong>{formatRemaining(Date.parse(h.expiresAt) - now)}</strong></p>
-                    <button disabled={busy} onClick={() => pay(h.holdId)}>Pay admission fee</button>{' '}
-                    <button className="secondary" disabled={busy} onClick={() => cancel(h.holdId)}>Cancel</button>
+                    <button disabled={busy} onClick={() => pay(h.holdId)}>ভর্তি ফি দিন</button>{' '}
+                    <button className="secondary" disabled={busy} onClick={() => cancel(h.holdId)}>বাতিল</button>
                     <p className="hint">Demo only: no real payment is taken.</p>
                   </>
                 )}
                 {st === 'EXPIRED' && (
                   <>
                     <p>This hold expired and the seat was released.</p>
-                    <button disabled={busy} onClick={() => apply(h.classId)}>Apply again</button>
+                    <button disabled={busy} onClick={() => apply(h.classId)}>আবার আবেদন করুন</button>
                   </>
                 )}
                 {st === 'CANCELLED' && (
-                  <button disabled={busy} onClick={() => apply(h.classId)}>Apply again</button>
+                  <button disabled={busy} onClick={() => apply(h.classId)}>আবার আবেদন করুন</button>
                 )}
                 {st === 'CONFIRMED' && <p>Admission confirmed.</p>}
               </article>

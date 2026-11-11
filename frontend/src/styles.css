@@ -30,3 +30,4 @@ nav button.active { background: var(--primary); color: #fff; }
 .badge.EXPIRED, .badge.CANCELLED { color: var(--muted); }
 .timer strong { font-variant-numeric: tabular-nums; }
 .hint { color: var(--muted); font-size: .8rem; margin-bottom: 0; }
+.field-error { color: var(--bad); font-size: .8rem; }
