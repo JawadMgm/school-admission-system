@@ -34,10 +34,14 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-static string Student(string? header) =>
-    string.IsNullOrWhiteSpace(header) || header.Length > 100
-        ? throw new ApiException(400, "MISSING_STUDENT_ID", "X-Student-Id header is required.")
-        : header.Trim();
+// X-Student-Id is the student's 17-digit birth registration number (spec §1.4).
+static string Student(string? header)
+{
+    var id = header?.Trim();
+    return id is { Length: 17 } && id.All(char.IsAsciiDigit)
+        ? id
+        : throw new ApiException(400, "INVALID_STUDENT_ID", "X-Student-Id must be a 17-digit birth registration number.");
+}
 
 app.MapPost("/classes", async (CreateClassRequest r, AdmissionService s) =>
 {
@@ -64,7 +68,7 @@ app.MapDelete("/holds/{holdId}", async (string holdId, [FromHeader(Name = "X-Stu
     return Results.NoContent();
 });
 app.MapGet("/me/holds", async ([FromHeader(Name = "X-Student-Id")] string? studentId, AdmissionService s) =>
-    new { holds = await s.MyHolds(Student(studentId)) });
+    await s.MyHolds(Student(studentId)));
 
 app.Run();
 

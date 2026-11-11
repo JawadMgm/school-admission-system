@@ -8,7 +8,7 @@ public class ApiException(int status, string code, string message) : Exception(m
     public string Code { get; } = code;
 }
 
-public record ClassDto(string Id, string Name, int TotalSeats, int HeldSeats, int HoldSeats, int ConfirmedSeats, int AvailableSeats);
+public record ClassDto(string Id, string Name, int TotalSeats, int HeldSeats, int ConfirmedSeats, int AvailableSeats);
 public record HoldDto(string HoldId, string ClassId, string StudentId, string Status, DateTime ExpiresAt);
 public record MyHoldDto(string HoldId, string ClassId, string ClassName, string Status, DateTime ExpiresAt);
 
@@ -35,7 +35,7 @@ public class AdmissionService(AppDb db, IConfiguration config)
         var c = new SchoolClass { Id = NewId("c_"), Name = name.Trim(), TotalSeats = totalSeats.Value, CreatedAt = DateTime.UtcNow };
         db.Classes.Add(c);
         await db.SaveChangesAsync();
-        return new ClassDto(c.Id, c.Name, c.TotalSeats, 0, 0, 0, c.TotalSeats);
+        return new ClassDto(c.Id, c.Name, c.TotalSeats, 0, 0, c.TotalSeats);
     }
 
     public async Task<List<ClassDto>> GetClasses() => await QueryClasses(db.Classes);
@@ -53,7 +53,7 @@ public class AdmissionService(AppDb db, IConfiguration config)
             Held = db.Holds.Count(h => h.ClassId == c.Id && h.Status == Held && h.ExpiresAt > now),
             Confirmed = db.Holds.Count(h => h.ClassId == c.Id && h.Status == Confirmed),
         }).ToListAsync();
-        return rows.Select(r => new ClassDto(r.Id, r.Name, r.TotalSeats, r.Held, r.Held, r.Confirmed,
+        return rows.Select(r => new ClassDto(r.Id, r.Name, r.TotalSeats, r.Held, r.Confirmed,
             Math.Max(0, r.TotalSeats - r.Held - r.Confirmed))).ToList();
     }
 
