@@ -1,0 +1,32 @@
+:root {
+  --bg: #f5f7fa; --card: #fff; --text: #1b2430; --muted: #5b6776; --line: #dde3ea;
+  --primary: #1f5fbf; --ok: #1a7f4b; --warn: #b26a00; --bad: #b3261e;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #11161d; --card: #1a212b; --text: #e8edf3; --muted: #9aa7b6; --line: #2b3542; --primary: #5b9bff; --ok: #4cc38a; --warn: #f0b24a; --bad: #ff7b72; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, sans-serif; }
+.app { max-width: 760px; margin: 0 auto; padding: 16px; }
+header { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; justify-content: space-between; }
+h1 { margin: 0; font-size: 1.5rem; }
+h2 { margin: 0 0 8px; font-size: 1.1rem; }
+label { display: grid; gap: 4px; font-size: .85rem; color: var(--muted); margin-bottom: 10px; }
+input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--text); font: inherit; }
+nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+button { padding: 8px 14px; border: 1px solid var(--primary); background: var(--primary); color: #fff; border-radius: 6px; font: inherit; cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.secondary, nav button { background: transparent; color: var(--primary); }
+nav button.active { background: var(--primary); color: #fff; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+.seats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0 0 12px; }
+.seats dt { font-size: .75rem; color: var(--muted); }
+.seats dd { margin: 0; font-size: 1.25rem; font-weight: 600; }
+.banner { padding: 10px 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid; }
+.banner.error { color: var(--bad); border-color: var(--bad); }
+.banner.ok { color: var(--ok); border-color: var(--ok); }
+.badge { padding: 2px 8px; border-radius: 10px; font-size: .8rem; border: 1px solid currentColor; }
+.badge.HELD { color: var(--warn); } .badge.CONFIRMED { color: var(--ok); }
+.badge.EXPIRED, .badge.CANCELLED { color: var(--muted); }
+.timer strong { font-variant-numeric: tabular-nums; }
+.hint { color: var(--muted); font-size: .8rem; margin-bottom: 0; }
